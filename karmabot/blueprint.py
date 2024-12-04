@@ -55,8 +55,8 @@ def get_badges_controller():
 @health.route("/", methods=["GET"])
 @health.route("/health", methods=["GET"])
 def get_health():
-    log_metrics("threads", None, "queue_size", executor._work_queue.qsize())
-    log_metrics("threads", None, "count", len(executor._threads))
+    # log_metrics("threads", None, "queue_size", executor._work_queue.qsize())
+    # log_metrics("threads", None, "count", len(executor._threads))
     if executor._work_queue.qsize() > (1.5 * len(executor._threads)):
         return "QUEUE FULL", 503
     return "OK", 200
@@ -85,7 +85,7 @@ def slack_event():
     if 'challenge' in eventw:
         return jsonify({'challenge': eventw['challenge']})
     else:
-        log_metrics('karmabot_events_passed', None, 'count', 1)
+        # log_metrics('karmabot_events_passed', None, 'count', 1)
 
         if eventw['event']['type'] == "message":
             if 'subtype' in eventw['event']:
@@ -93,7 +93,7 @@ def slack_event():
                 return jsonify({})
 
             if karma_re.search(eventw['event']['text']):
-                log_metrics('karmabot_events_passed', None, 'count', 1)
+                # log_metrics('karmabot_events_passed', None, 'count', 1)
                 eventw["rec_time"] = time.time()
                 karma_controller = get_karma_controller()
                 executor.submit(karma_controller.handle_event, eventw)
@@ -102,7 +102,7 @@ def slack_event():
         elif eventw['event']['type'] == "app_mention":
             if not karma_re.search(eventw['event']['text']):
                 # skip karma events- another event type "message" will handle it
-                log_metrics('karmabot_events_passed', None, 'count', 1)
+                # log_metrics('karmabot_events_passed', None, 'count', 1)
                 eventw["rec_time"] = time.time()
                 karma_controller = get_karma_controller()
                 executor.submit(karma_controller.handle_mention, eventw)
@@ -133,7 +133,7 @@ def slack_command():
         current_app.logger.error(f"Wrong verification token {current_app.config.get('VERIFICATION_TOKEN')} {command['token']}, discarding command")  # noqa 501
         abort(403)
     else:
-        log_metrics('karmabot_commands_passed', None, 'count', 1)
+        # log_metrics('karmabot_commands_passed', None, 'count', 1)
         current_app.logger.debug(command['command'])
         if command['command'] == '/karma':
             karma_controller = get_karma_controller()
@@ -189,20 +189,20 @@ def slack_interaction():
         else:
             current_app.logger.warning(f"Unknown interaction type: {interaction['type']}")
 
-        log_metrics('karmabot_interactions_passed', None, 'count', 1)
+        # log_metrics('karmabot_interactions_passed', None, 'count', 1)
 
         return '', 200
 
 
 @slack.errorhandler(Exception)
 def generic_error(e):
-    log_metrics('exceptions', {'name': e.__class__.__name__}, 'count', 1)
+    # log_metrics('exceptions', {'name': e.__class__.__name__}, 'count', 1)
     current_app.logger.exception(f'An error occurred during a request via {e}')
     return 'An internal error occurred.', 500
 
 
 @slack.errorhandler(500)
 def server_error(e):
-    log_metrics('exceptions', {'name': e.__class__.__name__}, 'count', 1)
+    # log_metrics('exceptions', {'name': e.__class__.__name__}, 'count', 1)
     current_app.logger.exception(f'An error occurred during a request via {e}')
     return 'An internal error occurred.', 500
