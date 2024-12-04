@@ -150,7 +150,7 @@ class KarmaController(object):
 
     def store_karma(self, ktype, subject, quantity, gifter, workspace_id):
         now = datetime.datetime.utcnow()
-        expires = now + datetime.timedelta(days=settings.KARMA_TTL)
+        expires = now + datetime.timedelta(days=int(settings.KARMA_TTL))
         data = {
             'type': ktype,
             'subject': subject,
