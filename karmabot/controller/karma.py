@@ -32,7 +32,7 @@ class KarmaController(object):
 
     def handle_event(self, eventw):
         late = time.time() - float(eventw['rec_time'])
-        log_metrics('karmabot_event_latency', None, 'time_elapsed', int(late * 1000))
+        # log_metrics('karmabot_event_latency', None, 'time_elapsed', int(late * 1000))
 
         current_app.logger.debug(f"{eventw['event']['type']}")
         if eventw['event']['type'] != 'message':
@@ -71,7 +71,7 @@ class KarmaController(object):
         current_app.logger.info(command['text'])
 
         if not command['text']:
-            log_metrics('karmabot_command', {"command": "none"}, 'count', 1)
+            # log_metrics('karmabot_command', {"command": "none"}, 'count', 1)
             return self.cmd_karma(command)
 
         # this needs to be checked before `if args[0] == "top"`
@@ -80,32 +80,33 @@ class KarmaController(object):
 
         args = command['text'].split()
         if args[0] == "stats":
-            log_metrics('karmabot_command', {"command": "stats"}, 'count', 1)
+            # log_metrics('karmabot_command', {"command": "stats"}, 'count', 1)
             if len(args) > 1:
                 return self.cmd_karma_subject_stats(command, command['text'][6:])
             return self.cmd_karma_stats(command)
 
         if args[0] == "show":
-            log_metrics('karmabot_command', {"command": "show"}, 'count', 1)
+            # log_metrics('karmabot_command', {"command": "show"}, 'count', 1)
             return self.cmd_karma_show(command)
 
         if args[0] == "top":
-            log_metrics('karmabot_command', {"command": "top"}, 'count', 1)
+            # log_metrics('karmabot_command', {"command": "top"}, 'count', 1)
             return self.cmd_karma_top(command)
 
         if args[0] == "bottom":
-            log_metrics('karmabot_command', {"command": "bottom"}, 'count', 1)
+            # log_metrics('karmabot_command', {"command": "bottom"}, 'count', 1)
             return self.cmd_karma_top(command, 1)
 
         if args[0] == "leave":
-            log_metrics('karmabot_command', {"command": "leave"}, 'count', 1)
+            # log_metrics('karmabot_command', {"command": "leave"}, 'count', 1)
             return self.cmd_leave(command)
 
         if args[0] == "help":
-            log_metrics('karmabot_command', {"command": "help"}, 'count', 1)
+            return self.cmd_karma_help(command)
+            # log_metrics('karmabot_command', {"command": "help"}, 'count', 1)
         else:
-            log_metrics('karmabot_command', {"command": "unknown"}, 'count', 1)
-        return self.cmd_karma_help(command)
+            # log_metrics('karmabot_command', {"command": "unknown"}, 'count', 1)
+            return self.cmd_karma_help(command)
 
     def handle_mention(self, eventw):
         command = eventw
@@ -123,28 +124,29 @@ class KarmaController(object):
         args = text[1].split(' ', 1)
 
         if args[0] == "stats":
-            log_metrics('karmabot_mention', {"command": "stats"}, 'count', 1)
+            # log_metrics('karmabot_mention', {"command": "stats"}, 'count', 1)
             if len(args) > 1:
                 return self.cmd_karma_subject_stats(command, command['text'][6:])
             return self.cmd_karma_stats(command)
 
         if args[0] == "show":
-            log_metrics('karmabot_mention', {"command": "show"}, 'count', 1)
+            # log_metrics('karmabot_mention', {"command": "show"}, 'count', 1)
             return self.cmd_karma_show(command)
 
         if args[0] == "top":
-            log_metrics('karmabot_mention', {"command": "top"}, 'count', 1)
+            # log_metrics('karmabot_mention', {"command": "top"}, 'count', 1)
             return self.cmd_karma_top(command)
 
         if args[0] == "bottom":
-            log_metrics('karmabot_mention', {"command": "bottom"}, 'count', 1)
+            # log_metrics('karmabot_mention', {"command": "bottom"}, 'count', 1)
             return self.cmd_karma_top(command, 1)
 
         if args[0] == "help":
-            log_metrics('karmabot_mention', {"command": "help"}, 'count', 1)
+            return self.cmd_karma_help(command)
+            # log_metrics('karmabot_mention', {"command": "help"}, 'count', 1)
         else:
-            log_metrics('karmabot_mention', {"command": "unknown"}, 'count', 1)
-        return self.cmd_karma_help(command)
+            # log_metrics('karmabot_mention', {"command": "unknown"}, 'count', 1)
+            return self.cmd_karma_help(command)
 
     def store_karma(self, ktype, subject, quantity, gifter, workspace_id):
         now = datetime.datetime.utcnow()
