@@ -41,8 +41,8 @@ class KarmaController(object):
 
         if 'user' in eventw['event']:
 
-            if self.blacklisted(eventw['team_id'], eventw['event']['user']):
-                return
+            # if self.blacklisted(eventw['team_id'], eventw['event']['user']):
+            #     return
             rlc = self.ratelimit_count(eventw['team_id'], eventw['event']['user'])
             if rlc > settings.KARMA_RATE_LIMIT:
                 msg = f"Slow down there, partner! You only get to use karma {settings.KARMA_RATE_LIMIT} times per hour. Wait a little while and try again."  # noqa E501
