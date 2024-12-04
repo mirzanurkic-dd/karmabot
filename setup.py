@@ -12,7 +12,7 @@ setup(
     install_requires=[
         'flask',
         'urlfetch',
-        'pymongo',
+        'pymongo[srv]',
         'influxdb',
         'flask-executor',
         'hvac'
